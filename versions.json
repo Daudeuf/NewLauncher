@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "changelog": "",
+  "urls": {
+    "windows": "https://monapp.com/NewLauncher-1.0.exe",
+    "mac": "https://monapp.com/NewLauncher-1.0.dmg",
+    "linux": "https://monapp.com/NewLauncher-1.0.deb"
+  }
+}
