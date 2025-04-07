@@ -40,7 +40,7 @@ jobs:
       - name: Upload fat jar (shadowJar)
         uses: actions/upload-artifact@v4
         with:
-          name: shadow-jar
+          name: shadow-jar-${{ matrix.os }}
           path: build/libs/*.jar
 
       - name: Build Windows installer
