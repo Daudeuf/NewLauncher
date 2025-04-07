@@ -1,7 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
-    id("java")
+    java
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -13,10 +13,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.json:json:20240303") // version récente
+    implementation("org.json:json:20240303")
 }
 
-// Définir le chemin de l'icône en fonction du système d'exploitation
 val os = OperatingSystem.current()
 val iconPath = when {
     os.isWindows -> "src/main/resources/icons/icon.ico"
@@ -25,84 +24,72 @@ val iconPath = when {
 }
 
 val mainClassName = "fr.clem76.Main"
-val appVersion = "1.0"
-val mainJarName = "NewLauncher-${appVersion}.jar"
+val appVersion = version.toString()
+val appName = "NewLauncher"
+val mainJarName = "$appName-$appVersion.jar"
+val imageDir = "$buildDir/image"
+val runtimeDir = "$buildDir/runtime"
 
-// Définir l'icône dans le manifeste
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = mainClassName
     }
 }
 
-// Créer le JAR avec le plugin Shadow (Fat JAR)
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-    archiveBaseName.set("NewLauncher")
-    archiveClassifier.set("") // pas de "-all"
+    archiveBaseName.set(appName)
+    archiveClassifier.set("")
     archiveVersion.set(appVersion)
 }
 
-// Définir la tâche JPackage pour chaque plateforme
-
-// JPackage pour Windows
-tasks.register<Exec>("jpackageWindows") {
+tasks.register<Exec>("jlinkImage") {
     dependsOn("shadowJar")
     doFirst {
-        commandLine = listOf("jpackage")
-            .plus(listOf(
-                "--input", "build/libs",
-                "--main-jar", mainJarName,
-                "--main-class", mainClassName,
-                "--app-version", appVersion,
-                "--java-options", "-Xmx512m",
-                "--icon", iconPath,
-                "--dest", "build/jpackage"
-            ))
-            .plus(listOf(
-                "--type", "exe",
-                "--win-shortcut"
-            ))
+        delete(runtimeDir)
+    }
+    commandLine = listOf(
+        "jlink",
+        "--output", runtimeDir,
+        "--add-modules", "jdk.crypto.ec,jdk.unsupported,jdk.zipfs,jdk.charsets", // minimal + crypto
+        "--strip-debug",
+        "--compress", "2",
+        "--no-header-files",
+        "--no-man-pages"
+    )
+}
+
+fun registerJPackage(name: String, type: String, extraOptions: List<String> = emptyList()) {
+    tasks.register<Exec>(name) {
+        dependsOn("jlinkImage")
+
+        onlyIf {
+            val currentOS = OperatingSystem.current()
+            when (name) {
+                "jpackageWindows" -> currentOS.isWindows
+                "jpackageMac" -> currentOS.isMacOsX
+                "jpackageLinux" -> currentOS.isLinux
+                else -> false
+            }
+        }
+
+        doFirst {
+            delete("$buildDir/jpackage")
+        }
+
+        commandLine = listOf("jpackage") + listOf(
+            "--runtime-image", runtimeDir,
+            "--input", "build/libs",
+            "--main-jar", mainJarName,
+            "--main-class", mainClassName,
+            "--app-version", appVersion,
+            "--icon", iconPath,
+            "--dest", "$buildDir/jpackage",
+            "--name", appName,
+            "--type", type
+        ) + extraOptions
     }
 }
 
-// JPackage pour macOS
-tasks.register<Exec>("jpackageMac") {
-    dependsOn("shadowJar")
-    doFirst {
-        commandLine = listOf("jpackage")
-            .plus(listOf(
-                "--input", "build/libs",
-                "--main-jar", mainJarName,
-                "--main-class", mainClassName,
-                "--app-version", appVersion,
-                "--java-options", "-Xmx512m",
-                "--icon", iconPath,
-                "--dest", "build/jpackage"
-            ))
-            .plus(listOf(
-                "--type", "dmg"
-            ))
-    }
-}
-
-// JPackage pour Linux
-tasks.register<Exec>("jpackageLinux") {
-    dependsOn("shadowJar")
-    doFirst {
-        commandLine = listOf("jpackage")
-            .plus(listOf(
-                "--input", "build/libs",
-                "--main-jar", mainJarName,
-                "--main-class", mainClassName,
-                "--app-version", appVersion,
-                "--java-options", "-Xmx512m",
-                "--icon", iconPath,
-                "--dest", "build/jpackage"
-            ))
-            .plus(listOf(
-                "--type", "deb",
-                "--linux-shortcut"
-            ))
-    }
-}
-
+registerJPackage("jpackageWindows", "exe", listOf("--win-shortcut"))
+registerJPackage("jpackageMac", "dmg")
+registerJPackage("jpackageLinux", "deb", listOf("--linux-shortcut"))
