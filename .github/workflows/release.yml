@@ -34,8 +34,8 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
-      - name: Build project with Gradle
-        run: ./gradlew clean # shadowJar
+      #- name: Build project with Gradle
+      #  run: ./gradlew clean # shadowJar
 
 
 

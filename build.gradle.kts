@@ -60,7 +60,6 @@ tasks.register<Exec>("jpackageWindows") {
             ))
             .plus(listOf(
                 "--type", "exe",
-                "--win-menu",
                 "--win-shortcut"
             ))
     }
