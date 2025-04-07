@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class Updater {
-    private static final String VERSION_URL = "https://monserveur.com/version.json"; // change-moi
+    private static final String VERSION_URL = "https://raw.githubusercontent.com/Daudeuf/NewLauncher/refs/heads/master/versions.json"; // change-moi
     private static final String CURRENT_VERSION = "1.0";
 
     public static void checkForUpdateAndMaybeRun() {
