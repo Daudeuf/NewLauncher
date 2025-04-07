@@ -35,13 +35,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build project with Gradle
-        run: ./gradlew clean shadowJar
+        run: ./gradlew clean # shadowJar
 
-      - name: Upload fat jar (shadowJar)
-        uses: actions/upload-artifact@v4
-        with:
-          name: shadow-jar-${{ matrix.os }}
-          path: build/libs/*.jar
+
 
       - name: Build Windows installer
         if: matrix.os == 'windows-latest'
@@ -53,6 +49,11 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: gradle jpackageLinux
 
+      - name: Upload fat jar (shadowJar)
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-jar-${{ matrix.os }}
+          path: build/libs/*.jar
 
       - name: Upload Windows package
         if: matrix.os == 'windows-latest'
