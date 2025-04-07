@@ -31,7 +31,7 @@ jobs:
           gradle-version: 8.10
 
       - name: Build project with Gradle
-        run: ./gradlew clean shadowJar jpackageWindows jpackageMac jpackageLinux
+        run: ./gradlew shadowJar
 
       - name: Upload Windows package
         if: matrix.os == 'windows-latest'
