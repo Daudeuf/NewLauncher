@@ -30,6 +30,9 @@ jobs:
         with:
           gradle-version: 8.10
 
+      - name: Give gradlew execute permissions
+        run: chmod +x gradlew
+
       - name: Build project with Gradle
         run: ./gradlew clean shadowJar
 
