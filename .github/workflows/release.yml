@@ -3,7 +3,7 @@ name: Build and Release for All OS
 on:
   push:
     tags:
-      - 'v*'  # ex: v1.0
+      - 'v*'
 
 jobs:
   build:
