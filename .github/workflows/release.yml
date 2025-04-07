@@ -26,12 +26,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.10
-
-      - name: Give gradlew execute permissions
-        run: chmod +x gradlew
 
       - name: Build project with Gradle
         run: ./gradlew clean shadowJar
