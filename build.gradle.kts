@@ -24,7 +24,7 @@ java {
 
 application {
     mainClass.set("fr.clem76.Main")
-    mainModule.set("fr.clem76")
+    mainModule.set("fr.clem76.newlauncher")
 }
 
 tasks.withType<Jar> {
@@ -50,6 +50,7 @@ val iconPath = "src/main/resources/icons/icon.$iconExtension"
 
 // jlink + jpackage config
 jlink {
+    moduleName.set("fr.clem76.newlauncher")
     imageName.set("NewLauncher")
 
     launcher {
