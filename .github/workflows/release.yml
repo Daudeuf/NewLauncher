@@ -34,7 +34,19 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build project with Gradle
-        run: ./gradlew clean shadowJar jpackageWindows jpackageMac jpackageLinux
+        run: ./gradlew clean shadowJar
+
+
+      - name: Build Windows installer
+        if: matrix.os == 'windows-latest'
+        run: gradle jpackageWindows
+      - name: Build macOS installer
+        if: matrix.os == 'macos-latest'
+        run: gradle jpackageMac
+      - name: Build Ubuntu installer
+        if: matrix.os == 'ubuntu-latest'
+        run: gradle jpackageLinux
+
 
       - name: Upload Windows package
         if: matrix.os == 'windows-latest'
