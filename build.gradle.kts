@@ -1,9 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
-    application
     id("java")
-    id("org.beryx.jlink") version "3.0.1"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -15,63 +13,97 @@ repositories {
 }
 
 dependencies {
-    implementation("org.json:json:20240303") // JSON lib
+    implementation("org.json:json:20240303") // version récente
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(23))
+// Définir le chemin de l'icône en fonction du système d'exploitation
+val os = OperatingSystem.current()
+val iconPath = when {
+    os.isWindows -> "src/main/resources/icons/icon.ico"
+    os.isMacOsX -> "src/main/resources/icons/icon.icns"
+    else -> "src/main/resources/icons/icon.png"
 }
 
-application {
-    mainClass.set("fr.clem76.Main")
-    mainModule.set("fr.clem76.newlauncher")
-}
+val mainJarName = "NewLauncher.jar"
+val mainClassName = "fr.clem76.Main"
+val appVersion = "1.0"
 
+// Définir l'icône dans le manifeste
 tasks.withType<Jar> {
     manifest {
-        attributes["Main-Class"] = "fr.clem76.Main"
+        attributes["Main-Class"] = mainClassName
     }
 }
 
+// Créer le JAR avec le plugin Shadow (Fat JAR)
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveBaseName.set("NewLauncher")
-    archiveClassifier.set("")
+    archiveClassifier.set("") // pas de "-all"
     archiveVersion.set("1.0")
 }
 
-// Détection OS pour choisir l'icône
-val os = OperatingSystem.current()
-val iconExtension = when {
-    os.isWindows -> "ico"
-    os.isMacOsX -> "icns"
-    else -> "png"
-}
-val iconPath = "src/main/resources/icons/icon.$iconExtension"
+// Définir la tâche JPackage pour chaque plateforme
 
-// jlink + jpackage config
-jlink {
-    moduleName.set("fr.clem76.newlauncher")
-    imageName.set("NewLauncher")
-
-    launcher {
-        name = "NewLauncher"
-    }
-
-    jpackage {
-        imageOutputDir = layout.buildDirectory.dir("jpackage").get().asFile
-        installerOutputDir = layout.buildDirectory.dir("installers").get().asFile
-        installerName = "NewLauncher"
-
-        /*installerType = when {
-            os.isWindows -> "msi"      // ou "exe" si supporté
-            os.isMacOsX -> "dmg"
-            else -> "deb"
-        }*/
-
-        icon = file(iconPath).absolutePath
-        skipInstaller = false
-        appVersion = "1.0"
-        vendor = "Clem76 Software"
-        description = "NewLauncher - A minimal Swing App"
+// JPackage pour Windows
+tasks.register<Exec>("jpackageWindows") {
+    dependsOn("shadowJar")
+    doFirst {
+        commandLine = listOf("jpackage")
+            .plus(listOf(
+                "--input", "build/libs",
+                "--main-jar", mainJarName,
+                "--main-class", mainClassName,
+                "--app-version", appVersion,
+                "--java-options", "-Xmx512m",
+                "--icon", iconPath,
+                "--dest", "build/jpackage"
+            ))
+            .plus(listOf(
+                "--type", "exe",
+                "--win-menu",
+                "--win-shortcut"
+            ))
     }
 }
+
+// JPackage pour macOS
+tasks.register<Exec>("jpackageMac") {
+    dependsOn("shadowJar")
+    doFirst {
+        commandLine = listOf("jpackage")
+            .plus(listOf(
+                "--input", "build/libs",
+                "--main-jar", mainJarName,
+                "--main-class", mainClassName,
+                "--app-version", appVersion,
+                "--java-options", "-Xmx512m",
+                "--icon", iconPath,
+                "--dest", "build/jpackage"
+            ))
+            .plus(listOf(
+                "--type", "dmg"
+            ))
+    }
+}
+
+// JPackage pour Linux
+tasks.register<Exec>("jpackageLinux") {
+    dependsOn("shadowJar")
+    doFirst {
+        commandLine = listOf("jpackage")
+            .plus(listOf(
+                "--input", "build/libs",
+                "--main-jar", mainJarName,
+                "--main-class", mainClassName,
+                "--app-version", appVersion,
+                "--java-options", "-Xmx512m",
+                "--icon", iconPath,
+                "--dest", "build/jpackage"
+            ))
+            .plus(listOf(
+                "--type", "deb",
+                "--linux-shortcut"
+            ))
+    }
+}
+
