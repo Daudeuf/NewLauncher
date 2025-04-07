@@ -24,9 +24,9 @@ val iconPath = when {
     else -> "src/main/resources/icons/icon.png"
 }
 
-val mainJarName = "NewLauncher.jar"
 val mainClassName = "fr.clem76.Main"
 val appVersion = "1.0"
+val mainJarName = "NewLauncher-${appVersion}.jar"
 
 // Définir l'icône dans le manifeste
 tasks.withType<Jar> {
@@ -39,7 +39,7 @@ tasks.withType<Jar> {
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveBaseName.set("NewLauncher")
     archiveClassifier.set("") // pas de "-all"
-    archiveVersion.set("1.0")
+    archiveVersion.set(appVersion)
 }
 
 // Définir la tâche JPackage pour chaque plateforme
