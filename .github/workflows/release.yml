@@ -31,6 +31,7 @@ jobs:
           gradle-version: 8.10
 
       - name: Give gradlew execute permissions
+        if: runner.os != 'Windows'
         run: chmod +x gradlew
 
       - name: Build project with Gradle
