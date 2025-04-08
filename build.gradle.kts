@@ -1,6 +1,7 @@
 plugins {
     application
     id("org.beryx.runtime") version "1.13.1" // latest as of now
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
