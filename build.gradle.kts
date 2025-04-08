@@ -40,15 +40,16 @@ runtime {
         when {
             currentOs.contains("win") -> {
                 installerType = "msi"
-                installerOptions.addAll(listOf("--win-dir-chooser", "--win-menu", "--win-shortcut", "--icon", "src/main/resources/icon.ico"))
+                installerOptions.addAll(listOf("--win-dir-chooser", "--win-menu", "--win-shortcut"))
+                imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
             }
             currentOs.contains("mac") -> {
                 installerType = "dmg"
-                installerOptions.addAll(listOf("--icon", "src/main/resources/icon.icns"))
+                imageOptions.addAll(listOf("--icon", "src/main/resources/icon.icns"))
             }
             currentOs.contains("nux") || currentOs.contains("nix") -> {
                 installerType = "deb"
-                installerOptions.addAll(listOf("--icon", "src/main/resources/icon.png"))
+                imageOptions.addAll(listOf("--icon", "src/main/resources/icon.png"))
             }
         }
     }
