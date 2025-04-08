@@ -17,13 +17,13 @@ java {
 }
 
 application {
-    mainClass.set("fr.clem76.Main") // TODO: change to your main class
+    mainClass.set("fr.clem76.Main")
 }
 
 val currentOs = System.getProperty("os.name").lowercase()
 
 runtime {
-    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+    options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("jdk.crypto.ec"))
 
     jpackage {
@@ -31,7 +31,7 @@ runtime {
         installerName = "NewLauncherInstaller"
         appVersion = "1.0"
 
-        jvmArgs = listOf("-Xmx512m")
+        //jvmArgs = listOf("-Xmx512m")
         mainJar = "${project.name}-all.jar"
 
         when {
