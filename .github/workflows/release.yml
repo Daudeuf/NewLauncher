@@ -49,6 +49,9 @@ jobs:
           name: package-${{ matrix.os }}
           path: |
             build/jpackage/**/
+            !build/jpackage/*.msi
+            !build/jpackage/*.deb
+            !build/jpackage/*.dmg
 
       - name: Upload Installer
         uses: actions/upload-artifact@v4
