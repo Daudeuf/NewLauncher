@@ -34,20 +34,13 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
-      #- name: Build project with Gradle
-      #  run: ./gradlew clean # shadowJar
+      - name: Build project with Gradle
+        run: ./gradlew clean shadowJar
 
 
 
-      - name: Build Windows installer
-        if: matrix.os == 'windows-latest'
-        run: gradle jpackageWindows
-      - name: Build macOS installer
-        if: matrix.os == 'macos-latest'
-        run: gradle jpackageMac
-      - name: Build Ubuntu installer
-        if: matrix.os == 'ubuntu-latest'
-        run: gradle jpackageLinux
+      - name: Build installer
+        run: gradle jpackage
 
       - name: Upload fat jar (shadowJar)
         uses: actions/upload-artifact@v4
