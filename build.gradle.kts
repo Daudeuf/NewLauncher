@@ -21,12 +21,6 @@ application {
 }
 
 val currentOs = System.getProperty("os.name").lowercase()
-val iconPath = when {
-    currentOs.contains("win") -> "${projectDir}/src/main/resources/icon.ico"
-    currentOs.contains("mac") -> "${projectDir}/src/main/resources/icon.icns"
-    currentOs.contains("nux") || currentOs.contains("nix") -> "${projectDir}/src/main/resources/icon.png"
-    else -> null
-}
 
 runtime {
     options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages"))
@@ -43,20 +37,18 @@ runtime {
 
         jvmArgs = listOf("-Xmx512m")
 
-        iconPath?.let {
-            installerOptions.addAll(listOf("--icon", it))
-        }
-
         when {
             currentOs.contains("win") -> {
                 installerType = "msi"
-                installerOptions.addAll(listOf("--win-dir-chooser", "--win-menu", "--win-shortcut"))
+                installerOptions.addAll(listOf("--win-dir-chooser", "--win-menu", "--win-shortcut", "--icon", "src/main/resources/icon.ico"))
             }
             currentOs.contains("mac") -> {
                 installerType = "dmg"
+                installerOptions.addAll(listOf("--icon", "src/main/resources/icon.icns"))
             }
             currentOs.contains("nux") || currentOs.contains("nix") -> {
                 installerType = "deb"
+                installerOptions.addAll(listOf("--icon", "src/main/resources/icon.png"))
             }
         }
     }
