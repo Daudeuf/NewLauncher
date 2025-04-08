@@ -26,9 +26,9 @@ runtime {
     modules.set(listOf("jdk.crypto.ec"))
 
     jpackage {
-        imageName = "YourApp"
-        installerName = "YourAppInstaller"
-        appVersion = "1.0.0"
+        imageName = "NewLauncher"
+        installerName = "NewLauncherInstaller"
+        appVersion = "1.0"
 
         jvmArgs = listOf("-Xmx512m")
 

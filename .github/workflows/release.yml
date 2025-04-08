@@ -34,6 +34,14 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
+      - name: Install jpackage dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot dpkg-dev
+
+      - name: Install WiX Toolset (Windows)
+        if: runner.os == 'Windows'
+        run: choco install wixtoolset -y
+
       - name: Build project with Gradle
         run: ./gradlew clean shadowJar jpackage
 
@@ -47,4 +55,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.os }}
-          path: build/jpackage/*
+          path: build/jpackage/*.{msi,deb,dmg,pkg,rpm,exe}
