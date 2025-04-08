@@ -37,7 +37,7 @@ jobs:
       - name: Build project with Gradle
         run: ./gradlew clean shadowJar jpackage
 
-      - name: Upload jar (shadowJar)
+      - name: Upload Jar (shadowJar)
         uses: actions/upload-artifact@v4
         with:
           name: jar-${{ matrix.os }}
@@ -47,4 +47,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.os }}
-          path: build/jpackage/*
+          path: build/jpackage/**
+
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          path: |
+            build/jpackage/*.msi
+            build/jpackage/*.deb
+            build/jpackage/*.dmg
