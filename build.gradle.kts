@@ -22,6 +22,13 @@ application {
 
 val currentOs = System.getProperty("os.name").lowercase()
 
+val iconPath = when {
+    currentOs.contains("win") -> "src/main/resources/icon.ico"
+    currentOs.contains("mac") -> "src/main/resources/icon.icns"
+    currentOs.contains("nux") || currentOs.contains("nix") -> "src/main/resources/icon.png"
+    else -> null
+}
+
 runtime {
     options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages"))
     modules.set(listOf(
@@ -36,38 +43,22 @@ runtime {
         appVersion = "1.0"
 
         jvmArgs = listOf("-Xmx512m")
-        mainJar = "${project.name}-all.jar"
+        // mainJar = "${project.name}-all.jar"
+
+        iconPath?.let {
+            installerOptions.addAll(listOf("--icon", it))
+        }
 
         when {
             currentOs.contains("win") -> {
                 installerType = "msi"
-                installerOptions.addAll(
-                    listOf(
-                        "--win-dir-chooser",
-                        "--win-menu",
-                        "--win-shortcut",
-                        "--icon", "src/main/resources/icon.ico"
-                    )
-                )
+                installerOptions.addAll(listOf("--win-dir-chooser", "--win-menu", "--win-shortcut"))
             }
-
             currentOs.contains("mac") -> {
-                installerType = "dmg" // ou "pkg"
-                installerOptions.addAll(
-                    listOf("--icon", "src/main/resources/icon.icns")
-                )
+                installerType = "dmg"
             }
-
             currentOs.contains("nux") || currentOs.contains("nix") -> {
-                installerType = "deb" // ou "rpm" si tu préfères
-                installerOptions.addAll(
-                    listOf("--icon", "src/main/resources/icon.png")
-                )
-            }
-
-            else -> {
-                // OS non supporté
-                println("⚠️ OS non reconnu : installateur non configuré.")
+                installerType = "deb"
             }
         }
     }
