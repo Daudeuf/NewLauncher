@@ -21,7 +21,6 @@ application {
 }
 
 val currentOs = System.getProperty("os.name").lowercase()
-
 val iconPath = when {
     currentOs.contains("win") -> "src/main/resources/icon.ico"
     currentOs.contains("mac") -> "src/main/resources/icon.icns"
@@ -32,9 +31,9 @@ val iconPath = when {
 runtime {
     options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages"))
     modules.set(listOf(
-        "java.base",       // inclus automatiquement mais indiqué pour clarté
-        "java.desktop",    // nécessaire pour AWT et Swing
-        "jdk.crypto.ec"    // si tu en as besoin pour SSL ou autres
+        "java.base",    // inclus automatiquement mais indiqué pour clarté
+        "java.desktop", // nécessaire pour AWT et Swing
+        "jdk.crypto.ec" // si tu en as besoin pour SSL ou autres
     ))
 
     jpackage {
@@ -43,7 +42,6 @@ runtime {
         appVersion = "1.0"
 
         jvmArgs = listOf("-Xmx512m")
-        // mainJar = "${project.name}-all.jar"
 
         iconPath?.let {
             installerOptions.addAll(listOf("--icon", it))

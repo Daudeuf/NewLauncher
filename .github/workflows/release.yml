@@ -47,7 +47,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.os }}
-          path: build/jpackage/**/
+          path: |
+            build/jpackage/**/
 
       - name: Upload Installer
         uses: actions/upload-artifact@v4
