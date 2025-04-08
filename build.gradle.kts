@@ -32,7 +32,7 @@ runtime {
         appVersion = "1.0"
 
         jvmArgs = listOf("-Xmx512m")
-        mainJar = "build/libs/${project.name}-all.jar"
+        mainJar = "./build/libs/${project.name}-all.jar"
 
         when {
             currentOs.contains("win") -> {
