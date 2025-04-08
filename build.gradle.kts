@@ -19,6 +19,7 @@ java {
 application {
     mainClass.set("fr.clem76.Main") // TODO: change to your main class
 }
+
 val currentOs = System.getProperty("os.name").lowercase()
 
 runtime {
@@ -31,10 +32,8 @@ runtime {
         appVersion = "1.0"
 
         jvmArgs = listOf("-Xmx512m")
+        mainJar = "build/libs/${project.name}-all.jar"
 
-        // licenseFile.set(project.file("LICENSE.txt"))
-
-        // Détection de l’OS et configuration des options
         when {
             currentOs.contains("win") -> {
                 installerType = "msi"
