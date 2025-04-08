@@ -22,9 +22,9 @@ application {
 
 val currentOs = System.getProperty("os.name").lowercase()
 val iconPath = when {
-    currentOs.contains("win") -> "src/main/resources/icon.ico"
-    currentOs.contains("mac") -> "src/main/resources/icon.icns"
-    currentOs.contains("nux") || currentOs.contains("nix") -> "src/main/resources/icon.png"
+    currentOs.contains("win") -> "${projectDir}/src/main/resources/icon.ico"
+    currentOs.contains("mac") -> "${projectDir}/src/main/resources/icon.icns"
+    currentOs.contains("nux") || currentOs.contains("nix") -> "${projectDir}/src/main/resources/icon.png"
     else -> null
 }
 
