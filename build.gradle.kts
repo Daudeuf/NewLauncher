@@ -52,7 +52,6 @@ tasks.register<Exec>("jlinkImage") {
         "--output", runtimeDir,
         "--add-modules", "jdk.crypto.ec,jdk.unsupported,jdk.zipfs,jdk.charsets", // minimal + crypto
         "--strip-debug",
-        "--compress", "2",
         "--no-header-files",
         "--no-man-pages"
     )
