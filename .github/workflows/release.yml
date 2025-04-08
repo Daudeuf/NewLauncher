@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.os }}
-          path: build/jpackage/*.{msi,deb,dmg,pkg,rpm,exe}
+          path: build/jpackage/*
