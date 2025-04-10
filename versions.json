@@ -1,8 +1,8 @@
 {
   "version": "1.1",
   "installers": {
-    "windows": "http://217.65.145.192/installer/NewLauncherInstaller-1.0.msi",
-    "linux": "http://217.65.145.192/installer/newlauncherinstaller_1.0_amd64.deb",
-    "mac": "http://217.65.145.192/installer/NewLauncherInstaller-1.0.dmg"
+    "windows": "http://217.65.145.192/installer/windows/NewLauncherInstaller-1.0.msi",
+    "linux": "http://217.65.145.192/installer/linux/newlauncherinstaller_1.0_amd64.deb",
+    "macos": "http://217.65.145.192/installer/macos/NewLauncherInstaller-1.0.dmg"
   }
 }
