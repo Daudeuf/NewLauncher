@@ -1,71 +1,102 @@
 package fr.clem76;
 
 import org.json.JSONObject;
-
-import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class Updater {
-    private static final String VERSION_URL = "https://raw.githubusercontent.com/Daudeuf/NewLauncher/refs/heads/master/versions.json"; // change-moi
-    private static final String CURRENT_VERSION = "1.0";
 
-    public static void checkForUpdateAndMaybeRun() {
+    private static final String UPDATE_URL = "https://raw.githubusercontent.com/Daudeuf/NewLauncher/refs/heads/master/versions.json";
+    private static final String CURRENT_VERSION = "1.0"; // version actuelle de l'app
+
+    public static void checkForUpdates() {
         try {
-            JSONObject versionData = fetchVersionData();
-            String latestVersion = versionData.getString("version");
-            String changelog = versionData.getString("changelog");
-
-            String os = System.getProperty("os.name").toLowerCase();
-            String downloadUrl;
-            if (os.contains("win")) {
-                downloadUrl = versionData.getJSONObject("urls").getString("windows");
-            } else if (os.contains("mac")) {
-                downloadUrl = versionData.getJSONObject("urls").getString("mac");
-            } else {
-                downloadUrl = versionData.getJSONObject("urls").getString("linux");
-            }
+            JSONObject json = fetchJson(UPDATE_URL);
+            String latestVersion = json.getString("version");
 
             if (!CURRENT_VERSION.equals(latestVersion)) {
-                int confirm = JOptionPane.showConfirmDialog(
-                        null,
-                        "Nouvelle version disponible : " + latestVersion + "\n\n" + changelog + "\n\nMettre à jour ?",
-                        "Mise à jour disponible",
-                        JOptionPane.YES_NO_OPTION
-                );
+                System.out.println("Nouvelle version disponible : " + latestVersion);
+                String os = detectOS();
+                String downloadUrl = json.getJSONObject("installers").getString(os);
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    Path file = downloadFile(downloadUrl);
-                    Runtime.getRuntime().exec(file.toAbsolutePath().toString());
-                    System.exit(0);
-                }
+                File installer = downloadInstaller(downloadUrl);
+                runInstaller(installer);
+            } else {
+                System.out.println("Application à jour.");
             }
+
         } catch (Exception e) {
-            System.err.println("Erreur lors de la vérification de mise à jour : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private static JSONObject fetchVersionData() throws IOException {
-        URL url = new URL(VERSION_URL);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Accept", "application/json");
-        try (InputStream is = conn.getInputStream()) {
-            String json = new String(is.readAllBytes());
-            return new JSONObject(json);
+    private static JSONObject fetchJson(String urlStr) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(urlStr).openConnection();
+        connection.setRequestProperty("Accept", "application/json");
+        try (InputStream in = connection.getInputStream()) {
+            String jsonText = new String(in.readAllBytes());
+            return new JSONObject(jsonText);
         }
     }
 
-    private static Path downloadFile(String fileUrl) throws IOException {
-        URL url = new URL(fileUrl);
-        Path target = Paths.get(System.getProperty("java.io.tmpdir"), new File(fileUrl).getName());
+    private static String detectOS() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) return "windows";
+        if (os.contains("mac")) return "macos";
+        if (os.contains("nux")) return "linux";
+        throw new UnsupportedOperationException("OS non supporté : " + os);
+    }
+
+    private static File downloadInstaller(String urlStr) throws IOException {
+        URL url = new URL(urlStr);
+        File tempFile = File.createTempFile("installer", getExtension(urlStr));
+        tempFile.deleteOnExit();
         try (InputStream in = url.openStream()) {
-            Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
-        return target;
+        return tempFile;
+    }
+
+    private static String getExtension(String url) {
+        if (url.endsWith(".msi")) return ".msi";
+        if (url.endsWith(".deb")) return ".deb";
+        if (url.endsWith(".dmg")) return ".dmg";
+        return ".bin";
+    }
+
+    private static void runInstaller(File installer) throws IOException {
+        String os = detectOS();
+
+        if (!installer.exists()) {
+            throw new FileNotFoundException("Installateur non trouvé : " + installer.getAbsolutePath());
+        }
+
+        if (!installer.canExecute()) {
+            installer.setExecutable(true);
+        }
+
+        System.out.println("Lancement de l’installateur : " + installer.getAbsolutePath());
+
+        ProcessBuilder pb;
+
+        if (os.equals("windows") && installer.getName().endsWith(".msi")) {
+            pb = new ProcessBuilder("msiexec", "/i", installer.getAbsolutePath());
+        } else {
+            pb = new ProcessBuilder(installer.getAbsolutePath());
+        }
+
+        pb.inheritIO(); // pour afficher les erreurs
+        try {
+            pb.start();
+        } catch (IOException e) {
+            System.err.println("Erreur de lancement de l'installateur : " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+
+        System.exit(0);
     }
 }
