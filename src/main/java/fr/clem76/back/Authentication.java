@@ -42,8 +42,6 @@ public class Authentication {
                         response.getXuid(),
                         response.getClientId()
                 );
-
-                // this.ctrl.refreshHeadImg(); // skin refresh
             } catch (IOException _) {}
         } catch (IOException | MicrosoftAuthenticationException _) {}
     }
@@ -70,8 +68,6 @@ public class Authentication {
                             response.getXuid(),
                             response.getClientId()
                     );
-
-                    // this.ctrl.refreshHeadImg(); // skin refresh
 
                     return true;
                 }

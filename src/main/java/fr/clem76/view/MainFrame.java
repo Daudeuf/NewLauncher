@@ -23,13 +23,14 @@ public class MainFrame extends JFrame implements ActionListener {
     public static final Color ACCENT_2 = Color.decode("#822659");
     public static final Color HOVER = Color.decode("#3E5641");
 
+    private BorderLayout layout = new BorderLayout();
     private JButton btnDisconnect = new JButton("Déconnexion");
     private JButton btnPlay = new JButton("Jouer");
     private JButton btnOptions = new JButton("Options");
     private JProgressBar progressBar = new JProgressBar();
 
-    private Image imgBackground;
-    private Image imgTitle;
+    private final Image imgBackground;
+    private final Image imgTitle;
     private Image imgPlayer;
 
     private JPanel panel = new JPanel() {
@@ -51,8 +52,7 @@ public class MainFrame extends JFrame implements ActionListener {
             if (imgPlayer != null) g.drawImage(imgPlayer, pw-150, ph/2-100, this);
             if (imgTitle != null) g.drawImage(imgTitle, pw/2-250, 50, this);
         }
-    };;
-    private BorderLayout layout = new BorderLayout();
+    };
 
     public MainFrame() {
         this.setTitle(LAUNCHER_LABEL);
