@@ -163,7 +163,8 @@ public class MainFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.btnDisconnect) {
-
+            Authentication.getInstance().disconnect();
+            Runtime.getRuntime().exit(0);
         }
 
         if (e.getSource() == this.btnPlay) {

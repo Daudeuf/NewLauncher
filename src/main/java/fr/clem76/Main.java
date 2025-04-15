@@ -15,8 +15,6 @@ public class Main {
     public static void main(String[] args) {
         //Updater.checkForUpdates();
 
-        Authentication.authenticate(() -> {
-            MainFrame.launch();
-        });
+        Authentication.authenticate(MainFrame::launch);
     }
 }

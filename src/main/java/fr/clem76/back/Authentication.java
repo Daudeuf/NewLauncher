@@ -29,6 +29,8 @@ public class Authentication {
 
             MicrosoftAuthResult response = authenticator.loginWithWebview();
 
+            if (response == null) return;
+
             loaded.put("msAccessToken", response.getAccessToken());
             loaded.put("msRefreshToken", response.getRefreshToken());
 
@@ -78,8 +80,6 @@ public class Authentication {
                     this.saveFile.save(loaded);
                 }
             }
-
-
         } catch (IOException _) {}
 
         return false;
@@ -89,15 +89,28 @@ public class Authentication {
         return authInfos;
     }
 
+    public void disconnect() {
+        this.authInfos = null;
+
+        try {
+            JSONObject loaded = saveFile.load();
+            loaded.remove("msAccessToken");
+            loaded.remove("msRefreshToken");
+            this.saveFile.save(loaded);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void authenticate(Runnable callback) {
 
         if (instance == null) instance = new Authentication();
 
-        while (!instance.isAuth()) {
+        if (!instance.isAuth()) {
             instance.msAuth();
         }
 
-        callback.run();
+        if (instance.isAuth()) callback.run();
     }
 
     public static Authentication getInstance() {
