@@ -21,37 +21,34 @@ public class Authentication {
         this.saveFile = new Saver(Main.DIRECTORY.resolve("account-data.json").toFile());
     }
 
-    private void msAuth(Runnable callback) {
+    private void msAuth() {
         MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
 
         try {
             JSONObject loaded = saveFile.load();
 
-            authenticator.loginWithAsyncWebview().whenComplete((response, error) -> {
-                if (error == null) {
-                    loaded.put("msAccessToken", response.getAccessToken());
-                    loaded.put("msRefreshToken", response.getRefreshToken());
-                    try {
-                        this.saveFile.save(loaded);
+            MicrosoftAuthResult response = authenticator.loginWithWebview();
 
-                        this.authInfos = new AuthInfos(
-                                response.getProfile().getName(),
-                                response.getAccessToken(),
-                                response.getProfile().getId(),
-                                response.getXuid(),
-                                response.getClientId()
-                        );
+            loaded.put("msAccessToken", response.getAccessToken());
+            loaded.put("msRefreshToken", response.getRefreshToken());
 
-                        // this.ctrl.refreshHeadImg(); // skin refresh
-                    } catch (IOException _) {}
-                }
+            try {
+                this.saveFile.save(loaded);
 
-                callback.run();
-            });
-        } catch (IOException _) {}
+                this.authInfos = new AuthInfos(
+                        response.getProfile().getName(),
+                        response.getAccessToken(),
+                        response.getProfile().getId(),
+                        response.getXuid(),
+                        response.getClientId()
+                );
+
+                // this.ctrl.refreshHeadImg(); // skin refresh
+            } catch (IOException _) {}
+        } catch (IOException | MicrosoftAuthenticationException _) {}
     }
 
-    public boolean isAuth() {
+    private boolean isAuth() {
         try {
             JSONObject loaded = saveFile.load();
 
@@ -92,13 +89,19 @@ public class Authentication {
         return false;
     }
 
+    public AuthInfos getAuthInfos() {
+        return authInfos;
+    }
+
     public static void authenticate(Runnable callback) {
 
         if (instance == null) instance = new Authentication();
 
         while (!instance.isAuth()) {
-            instance.msAuth(callback);
+            instance.msAuth();
         }
+
+        callback.run();
     }
 
     public static Authentication getInstance() {

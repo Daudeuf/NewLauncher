@@ -2,6 +2,7 @@ plugins {
     application
     id("org.beryx.runtime") version "1.13.1" // latest as of now
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 repositories {
@@ -24,6 +25,11 @@ java {
 
 application {
     mainClass.set("fr.clem76.Main")
+}
+
+javafx {
+    version = "21"
+    modules = listOf("javafx.swing", "javafx.web")
 }
 
 val currentOs = System.getProperty("os.name").lowercase()

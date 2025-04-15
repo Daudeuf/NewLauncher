@@ -1,5 +1,7 @@
 package fr.clem76.view;
 
+import fr.clem76.back.Authentication;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -142,7 +144,8 @@ public class MainFrame extends JFrame implements ActionListener {
     public void refreshPlayerImage() {
         try
         {
-            URI url = new URI(String.format("https://mc-heads.net/player/%s/100.png", "DAUBEUF"));
+            String player = Authentication.getInstance().getAuthInfos().getUsername();
+            URI url = new URI(String.format("https://mc-heads.net/player/%s/100.png", player));
 
             this.imgPlayer = new ImageIcon(url.toURL()).getImage();
         }
