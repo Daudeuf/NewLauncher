@@ -168,7 +168,11 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == this.btnPlay) {
-
+            /*try {
+                ServerData.init("la.bonne.ip", Arrays.asList("test", "exemple"));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }*/
         }
 
         if (e.getSource() == this.btnOptions) {

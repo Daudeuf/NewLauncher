@@ -11,11 +11,13 @@ public class Updater {
 
     private static final String UPDATE_URL = "https://raw.githubusercontent.com/Daudeuf/NewLauncher/refs/heads/master/versions.json";
     private static final String CURRENT_VERSION = "1.0"; // version actuelle de l'app
+    public  static       String address;
 
     public static void checkForUpdates() {
         try {
             JSONObject json = fetchJson(UPDATE_URL);
             String latestVersion = json.getString("version");
+            address = json.getString("address");
 
             if (!CURRENT_VERSION.equals(latestVersion)) {
                 System.out.println("Nouvelle version disponible : " + latestVersion);
@@ -51,7 +53,7 @@ public class Updater {
     }
 
     private static File downloadInstaller(String urlStr) throws IOException {
-        URL url = new URL(urlStr);
+        URL url = new URL(String.format("http://%s/%s", address, urlStr));
         File tempFile = File.createTempFile("installer", getExtension(urlStr));
         tempFile.deleteOnExit();
         try (InputStream in = url.openStream()) {

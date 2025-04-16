@@ -10,12 +10,16 @@ repositories {
     maven {
         url = uri("https://litarvan.github.io/maven")
     }
+    maven {
+        url = uri("https://jitpack.io/")
+    }
 }
 
 dependencies {
     implementation("fr.litarvan:openauth:1.1.6")
     implementation("fr.flowarg:openlauncherlib:3.2.11")
 
+    implementation("com.github.Querz:NBT:6.1")
     implementation("org.json:json:20240303")
 }
 
