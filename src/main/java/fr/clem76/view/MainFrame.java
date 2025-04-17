@@ -1,14 +1,21 @@
 package fr.clem76.view;
 
 import fr.clem76.back.Authentication;
+import fr.clem76.back.DataReceiver;
+import fr.clem76.back.Game;
+import fr.clem76.back.ServerData;
+import org.json.JSONArray;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static fr.clem76.Main.LAUNCHER_LABEL;
@@ -80,8 +87,7 @@ public class MainFrame extends JFrame implements ActionListener {
         panelSouth.add(panelSouthUp);
         panelSouth.add(panelSouthDown);
         progressBar.setPreferredSize(new Dimension(1100, 15));
-        progressBar.setVisible(false); // TODO : show when game start
-        //progressBar.setValue(50); // TODO : set when using
+        progressBar.setVisible(false);
 
         // LEFT
         JPanel panelLeft = new JPanel();
@@ -168,11 +174,15 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == this.btnPlay) {
-            /*try {
-                ServerData.init("la.bonne.ip", Arrays.asList("test", "exemple"));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }*/
+            try {
+                JSONArray array = DataReceiver.data.getJSONArray("oldIp");
+                ArrayList<String> l = new ArrayList<>();
+                for (Object o : array) l.add(o.toString());
+
+                ServerData.init(DataReceiver.data.getString("ip"), l);
+            } catch (IOException _) {}
+
+            Game.setupAndStart(progressBar);
         }
 
         if (e.getSource() == this.btnOptions) {
