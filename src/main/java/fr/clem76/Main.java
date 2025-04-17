@@ -13,7 +13,7 @@ public class Main {
     public static final Path   DIRECTORY = Saver.createMinecraftGameDir(LAUNCHER_NAME, true);
 
     public static void main(String[] args) {
-        //Updater.checkForUpdates();
+        Updater.checkForUpdates();
 
         Authentication.authenticate(MainFrame::launch);
     }
