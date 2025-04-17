@@ -16,9 +16,7 @@ public class Main {
 
     public static void main(String[] args) {
         Updater.checkForUpdates();
-
         DataReceiver.init();
-
         Authentication.authenticate(MainFrame::launch);
     }
 }
