@@ -44,7 +44,9 @@ runtime {
     modules.set(listOf(
         "java.base",    // inclus automatiquement mais indiqué pour clarté
         "java.desktop", // nécessaire pour AWT et Swing
-        "jdk.crypto.ec" // si tu en as besoin pour SSL ou autres
+        "jdk.crypto.ec", // si tu en as besoin pour SSL ou autres
+        "javafx.controls",
+        "javafx.fxml"
     ))
 
     jpackage {
