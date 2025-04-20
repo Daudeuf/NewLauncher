@@ -52,7 +52,11 @@ runtime {
         installerName = "NewLauncherInstaller"
         appVersion = "1.0"
 
-        jvmArgs = listOf("-Xmx512m")
+        jvmArgs = listOf(
+            "-Xmx512m",  // Limite la mémoire si nécessaire
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED"
+        )
 
         when {
             currentOs.contains("win") -> {
