@@ -44,7 +44,8 @@ runtime {
     modules.set(listOf(
         "java.base",    // inclus automatiquement mais indiqué pour clarté
         "java.desktop", // nécessaire pour AWT et Swing
-        "jdk.crypto.ec" // si tu en as besoin pour SSL ou autres
+        "jdk.crypto.ec", // si tu en as besoin pour SSL ou autres
+        "jdk.unsupported"
     ))
 
     jpackage {
@@ -52,11 +53,7 @@ runtime {
         installerName = "NewLauncherInstaller"
         appVersion = "1.0"
 
-        jvmArgs = listOf(
-            "-Xmx512m",  // Limite la mémoire si nécessaire
-            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-            "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED"
-        )
+        jvmArgs = listOf("-Xmx512m")
 
         when {
             currentOs.contains("win") -> {
