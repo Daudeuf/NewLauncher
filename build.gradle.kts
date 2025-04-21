@@ -45,7 +45,8 @@ runtime {
         "java.base",
         "java.desktop",
         "jdk.crypto.ec",
-        "jdk.unsupported"
+        "jdk.unsupported",
+        "jdk.unsupported.desktop"
     ))
 
     jpackage {
