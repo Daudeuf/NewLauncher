@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static fr.clem76.Main.LAUNCHER_LABEL;
@@ -35,6 +34,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private JButton btnPlay = new JButton("Jouer");
     private JButton btnOptions = new JButton("Options");
     private JProgressBar progressBar = new JProgressBar();
+    private Options options;
 
     private final Image imgBackground;
     private final Image imgTitle;
@@ -70,6 +70,10 @@ public class MainFrame extends JFrame implements ActionListener {
         this.add(panel);
         panel.setLayout(layout);
         panel.setBackground(BACKGROUND);
+
+        try {
+            options = new Options();
+        } catch (IOException _) {}
 
         // SOUTH
         JPanel panelSouth = new JPanel(new GridLayout(2, 1, 5, 5));
@@ -187,7 +191,7 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == this.btnOptions) {
-
+            options.setVisible(!options.isVisible());
         }
     }
 

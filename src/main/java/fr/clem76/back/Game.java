@@ -1,7 +1,9 @@
 package fr.clem76.back;
 
+import com.sun.management.OperatingSystemMXBean;
 import fr.clem76.Main;
 import fr.clem76.view.MainFrame;
+import fr.clem76.view.Options;
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;
@@ -19,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
@@ -27,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -176,6 +180,9 @@ public class Game {
         if (mods.length == 0) modsList.addAll(List.of(modsString.split("\n")));
         System.out.println(Arrays.toString(mods));
         System.out.println(modsList);*/
+        if (Options.json.has("additional_mods")) {
+            modsList.addAll(Arrays.asList(Options.json.getString("additional_mods").split("\n")));
+        }
 
         String[] mods = modsList.toArray(new String[0]);
 
@@ -206,8 +213,8 @@ public class Game {
 					GameFolder.FLOW_UPDATER
 			);
 
-			String ramString = "8192"; // ctrl.getSaver().get("ram");
-			int    ramValue  = Integer.parseInt(ramString == null ? "4096" : ramString);
+			long memorySize = ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize() / (1024 * 1024);
+            int ramValue = Options.json.has("ram") ? Options.json.getInt("ram") : (int) Math.round(Math.min(memorySize, 16384) / 2.0);
 
             // Set of ram
 			noFramework.getAdditionalVmArgs().add( String.format("-Xmx%sM", ramValue) );
@@ -223,9 +230,11 @@ public class Game {
 			p.waitFor();
 
             // reopen launcher
-            frame.getProgressbar().setVisible(false);
-            frame.setVisible(true);
-            frame.setButtonState(true);
+            if (Options.json.has("reopen_launcher") && Options.json.getBoolean("reopen_launcher")) {
+                frame.getProgressbar().setVisible(false);
+                frame.setVisible(true);
+                frame.setButtonState(true);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException(e);
