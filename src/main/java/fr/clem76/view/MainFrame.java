@@ -88,6 +88,7 @@ public class MainFrame extends JFrame implements ActionListener {
         panelSouth.add(panelSouthDown);
         progressBar.setPreferredSize(new Dimension(1100, 15));
         progressBar.setVisible(false);
+        progressBar.setMaximum(1000);
 
         // LEFT
         JPanel panelLeft = new JPanel();
@@ -192,5 +193,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public JProgressBar getProgressbar() {
         return this.progressBar;
+    }
+
+    public void setButtonState(boolean state) {
+        this.btnPlay.setEnabled(state);
+        this.btnDisconnect.setEnabled(state);
+        this.btnOptions.setEnabled(state);
     }
 }

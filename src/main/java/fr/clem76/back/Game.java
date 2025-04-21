@@ -3,6 +3,9 @@ package fr.clem76.back;
 import fr.clem76.Main;
 import fr.clem76.view.MainFrame;
 import fr.flowarg.flowupdater.FlowUpdater;
+import fr.flowarg.flowupdater.download.DownloadList;
+import fr.flowarg.flowupdater.download.IProgressCallback;
+import fr.flowarg.flowupdater.download.Step;
 import fr.flowarg.flowupdater.utils.ModFileDeleter;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
 import fr.flowarg.flowupdater.versions.forge.ForgeVersion;
@@ -15,11 +18,14 @@ import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -31,16 +37,18 @@ public class Game {
 
     public static void setupAndStart(MainFrame frame) {
         frame.getProgressbar().setVisible(true);
-        frame.getProgressbar().setValue(50);
+        frame.setButtonState(false);
 
-        try {
-            ArrayList<String> mods = Game.setupMods(frame);
+        new Thread(() -> {
+            try {
+                ArrayList<String> mods = Game.setupMods(frame);
 
-            Game.setupLoader(mods, frame);
+                Game.setupLoader(mods, frame);
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     private static ArrayList<String> setupMods(MainFrame frame) throws IOException {
@@ -52,6 +60,42 @@ public class Game {
 
         if (!loaded.has("lastZipUrl") || !loaded.getString("lastZipUrl").equals(DataReceiver.data.getString("zipUrl"))) {
             Path tempZip = Files.createTempFile("downloaded-", ".zip");
+            try {
+                URLConnection connection = new URI(DataReceiver.data.getString("zipUrl")).toURL().openConnection();
+
+                long totalSize = connection.getContentLengthLong();
+
+                try (InputStream in = connection.getInputStream(); OutputStream out = Files.newOutputStream(tempZip, StandardOpenOption.TRUNCATE_EXISTING)) {
+                    //Files.copy(in, tempZip, StandardCopyOption.REPLACE_EXISTING);
+
+                    byte[] buffer = new byte[8192];
+                    long downloaded = 0;
+                    int bytesRead;
+                    //int lastPercent = -1;
+
+                    while ((bytesRead = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, bytesRead);
+                        downloaded += bytesRead;
+
+                        if (totalSize > 0) {
+
+                            frame.getProgressbar().setValue((int) (500.0 * downloaded / totalSize));
+
+                            /*int percent = (int) ((downloaded * 100) / totalSize);
+                            if (percent != lastPercent) {
+                                System.out.print("\rTéléchargement : " + percent + "%");
+                                lastPercent = percent;
+                            }*/
+                        }
+                    }
+
+                }
+
+
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+
             try (InputStream in = new URI(DataReceiver.data.getString("zipUrl")).toURL().openStream()) {
                 Files.copy(in, tempZip, StandardCopyOption.REPLACE_EXISTING);
             } catch (URISyntaxException _) {}
@@ -143,7 +187,14 @@ public class Game {
         final FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder()
                 .withVanillaVersion(vanillaVersion)
                 .withModLoaderVersion(forge)
-                //.withProgressCallback(callback)
+                .withProgressCallback(new IProgressCallback()
+                    {
+                        @Override
+                        public void update(DownloadList.DownloadInfo info)
+                        {
+                            frame.getProgressbar().setValue(500 + (int) (500.0 * info.getDownloadedBytes() / info.getTotalToDownloadBytes()));
+                        }
+                    })
                 .build();
 
         try {
