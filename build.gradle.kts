@@ -34,7 +34,7 @@ application {
 
 javafx {
     version = "21"
-    modules = listOf("javafx.swing", "javafx.web")
+    modules = listOf("javafx.swing", "javafx.web", "javafx.controls", "javafx.media", "javafx.fxml")
 }
 
 val currentOs = System.getProperty("os.name").lowercase()
@@ -42,9 +42,9 @@ val currentOs = System.getProperty("os.name").lowercase()
 runtime {
     options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages"))
     modules.set(listOf(
-        "java.base",    // inclus automatiquement mais indiqué pour clarté
-        "java.desktop", // nécessaire pour AWT et Swing
-        "jdk.crypto.ec", // si tu en as besoin pour SSL ou autres
+        "java.base",
+        "java.desktop",
+        "jdk.crypto.ec",
         "jdk.unsupported"
     ))
 
