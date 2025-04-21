@@ -10,22 +10,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class Authentication {
-
     private static Authentication instance;
 
-    private final Saver saveFile;
     private AuthInfos authInfos;
-
-
-    private Authentication() {
-        this.saveFile = new Saver(Main.DIRECTORY.resolve("account-data.json").toFile());
-    }
 
     private void msAuth() {
         MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
 
         try {
-            JSONObject loaded = saveFile.load();
+            JSONObject loaded = Main.SAVER.load();
 
             MicrosoftAuthResult response = authenticator.loginWithWebview();
 
@@ -35,7 +28,7 @@ public class Authentication {
             loaded.put("msRefreshToken", response.getRefreshToken());
 
             try {
-                this.saveFile.save(loaded);
+                Main.SAVER.save(loaded);
 
                 this.authInfos = new AuthInfos(
                         response.getProfile().getName(),
@@ -50,7 +43,7 @@ public class Authentication {
 
     private boolean isAuth() {
         try {
-            JSONObject loaded = saveFile.load();
+            JSONObject loaded = Main.SAVER.load();
 
             if (loaded.has("msAccessToken") && loaded.has("msRefreshToken")) {
                 try
@@ -60,7 +53,7 @@ public class Authentication {
 
                     loaded.put("msAccessToken", response.getAccessToken());
                     loaded.put("msRefreshToken", response.getRefreshToken());
-                    this.saveFile.save(loaded);
+                    Main.SAVER.save(loaded);
 
 
                     this.authInfos = new AuthInfos(
@@ -77,7 +70,7 @@ public class Authentication {
                 {
                     loaded.remove("msAccessToken");
                     loaded.remove("msRefreshToken");
-                    this.saveFile.save(loaded);
+                    Main.SAVER.save(loaded);
                 }
             }
         } catch (IOException _) {}
@@ -93,10 +86,10 @@ public class Authentication {
         this.authInfos = null;
 
         try {
-            JSONObject loaded = saveFile.load();
+            JSONObject loaded = Main.SAVER.load();
             loaded.remove("msAccessToken");
             loaded.remove("msRefreshToken");
-            this.saveFile.save(loaded);
+            Main.SAVER.save(loaded);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

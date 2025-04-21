@@ -35,8 +35,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Game {
-    private static final Saver saveFile = new Saver(Main.DIRECTORY.resolve("pack-data.json").toFile());
-
     public static void setupAndStart(MainFrame frame) {
         frame.getProgressbar().setVisible(true);
         frame.setButtonState(false);
@@ -54,7 +52,7 @@ public class Game {
     }
 
     private static ArrayList<String> setupMods(MainFrame frame) throws IOException {
-        JSONObject loaded = saveFile.load();
+        JSONObject loaded = Main.SAVER.load();
 
         ArrayList<String> mods = new ArrayList<>();
         ArrayList<String> no_replace = new ArrayList<>();
@@ -141,7 +139,7 @@ public class Game {
 
             loaded.put("mods", mods);
             loaded.put("lastZipUrl", DataReceiver.data.getString("zipUrl"));
-            saveFile.save(loaded);
+            Main.SAVER.save(loaded);
         }
 
         return loaded.getJSONArray("mods").toList().stream().map(obj -> (String) obj).collect(Collectors.toCollection(ArrayList::new));
@@ -155,9 +153,12 @@ public class Game {
                 .withName(mc)
                 .build();
 
-        if (Options.json.has("additional_mods")) {
-            modsList.addAll(Arrays.asList(Options.json.getString("additional_mods").split("\n")));
-        }
+        try {
+            JSONObject json = Main.SAVER.load();
+            if (json.has("additional_mods")) {
+                modsList.addAll(Arrays.asList(json.getString("additional_mods").split("\n")));
+            }
+        } catch (IOException _) {}
 
         String[] mods = modsList.toArray(new String[0]);
 
@@ -189,7 +190,12 @@ public class Game {
 			);
 
 			long memorySize = ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize() / (1024 * 1024);
-            int ramValue = Options.json.has("ram") ? Options.json.getInt("ram") : (int) Math.round(Math.min(memorySize, 16384) / 2.0);
+            int ramValue = (int) Math.round(Math.min(memorySize, 16384) / 2.0);
+
+            try {
+                JSONObject json = Main.SAVER.load();
+                if (json.has("ram")) ramValue = json.getInt("ram");
+            } catch (IOException _) {}
 
 			noFramework.getAdditionalVmArgs().add( String.format("-Xmx%sM", ramValue) );
 
@@ -203,11 +209,14 @@ public class Game {
 
 			p.waitFor();
 
-            if (Options.json.has("reopen_launcher") && Options.json.getBoolean("reopen_launcher")) {
-                frame.getProgressbar().setVisible(false);
-                frame.setVisible(true);
-                frame.setButtonState(true);
-            }
+            try {
+                JSONObject json = Main.SAVER.load();
+                if (json.has("reopen_launcher") && json.getBoolean("reopen_launcher")) {
+                    frame.getProgressbar().setVisible(false);
+                    frame.setVisible(true);
+                    frame.setButtonState(true);
+                }
+            } catch (IOException _) {}
 
         } catch (Exception e) {
             throw new RuntimeException(e);

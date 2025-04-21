@@ -17,10 +17,8 @@ public class DataReceiver {
     public static JSONObject data;
 
     public static void init() {
-        Saver saveFile = new Saver(Main.DIRECTORY.resolve("server-data.json").toFile());
-
         try {
-            JSONObject loaded = saveFile.load();
+            JSONObject loaded = Main.SAVER.load();
             URL url = null;
 
             while (url == null) {
@@ -42,14 +40,14 @@ public class DataReceiver {
                     if (uri.isAbsolute()) {
                         url = uri.toURL();
                         loaded.put("url", code);
-                        saveFile.save(loaded);
+                        Main.SAVER.save(loaded);
                     } else {
                         if (loaded.has("url")) loaded.remove("url");
-                        saveFile.save(loaded);
+                        Main.SAVER.save(loaded);
                     }
                 } catch (URISyntaxException e) {
                     if (loaded.has("url")) loaded.remove("url");
-                    saveFile.save(loaded);
+                    Main.SAVER.save(loaded);
                 }
             }
 
@@ -59,7 +57,7 @@ public class DataReceiver {
                 data = new JSONObject(new String(in.readAllBytes()));
             } catch (IOException e) {
                 if (loaded.has("url")) loaded.remove("url");
-                saveFile.save(loaded);
+                Main.SAVER.save(loaded);
                 init();
             }
 

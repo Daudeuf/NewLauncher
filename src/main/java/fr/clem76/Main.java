@@ -13,6 +13,7 @@ public class Main {
     public static final String LAUNCHER_LABEL = "Diamoria";
     public static final String LAUNCHER_VERSION = "1.1";
     public static final Path   DIRECTORY = Saver.createMinecraftGameDir(LAUNCHER_NAME, true);
+    public static final Saver  SAVER = new Saver(Main.DIRECTORY.resolve("launcher-data.json").toFile());
 
     public static void main(String[] args) {
         Updater.checkForUpdates();
