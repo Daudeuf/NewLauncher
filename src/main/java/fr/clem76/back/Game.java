@@ -225,6 +225,7 @@ public class Game {
             // reopen launcher
             frame.getProgressbar().setVisible(false);
             frame.setVisible(true);
+            frame.setButtonState(true);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
