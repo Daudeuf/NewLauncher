@@ -27,7 +27,6 @@ public class MainFrame extends JFrame implements ActionListener {
     public static final Color PRIMARY = Color.decode("#F0F0F0");
     public static final Color ACCENT_1 = Color.decode("#004D61");
     public static final Color ACCENT_2 = Color.decode("#822659");
-    public static final Color HOVER = Color.decode("#3E5641");
 
     private BorderLayout layout = new BorderLayout();
     private JButton btnDisconnect = new JButton("Déconnexion");
@@ -138,7 +137,6 @@ public class MainFrame extends JFrame implements ActionListener {
         this.refreshPlayerImage();
 
         final String[] lst = new String[] {
-                //"mariana-salimena-birch-forest-artstation.png",
                 "mariana-salimena-swamp-artstation.png",
                 "mariana-salimena-swamp-b-artstation.png"
         };

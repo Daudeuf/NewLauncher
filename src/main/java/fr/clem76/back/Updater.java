@@ -3,7 +3,8 @@ package fr.clem76.back;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;

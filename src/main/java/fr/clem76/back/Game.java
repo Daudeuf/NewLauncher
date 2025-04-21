@@ -3,7 +3,6 @@ package fr.clem76.back;
 import com.sun.management.OperatingSystemMXBean;
 import fr.clem76.Main;
 import fr.clem76.view.MainFrame;
-import fr.clem76.view.Options;
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;
