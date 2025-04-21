@@ -70,7 +70,6 @@ runtime {
         "jdk.compiler",
         "jdk.crypto.cryptoki",
         "jdk.crypto.ec",
-        "jdk.crypto.mscapi",
         "jdk.dynalink",
         "jdk.editpad",
         "jdk.graal.compiler",
