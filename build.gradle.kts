@@ -114,9 +114,10 @@ runtime {
     ))
 
     jpackage {
-        imageName = "NewLauncher"
-        installerName = "NewLauncherInstaller"
+        imageName = "Diamoria"
+        installerName = "DiamoriaInstaller"
         appVersion = "1.0"
+        installerOptions.addAll(listOf("--vendor", "Lost Studio"))
 
         jvmArgs = listOf("-Xmx512m")
 
