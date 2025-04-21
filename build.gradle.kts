@@ -34,7 +34,7 @@ application {
 
 javafx {
     version = "21"
-    modules = listOf("javafx.swing", "javafx.web", "javafx.controls", "javafx.media", "javafx.fxml")
+    modules = listOf("javafx.swing", "javafx.web", "javafx.controls", "javafx.media", "javafx.fxml", "javafx.base", "javafx.graphics")
 }
 
 val currentOs = System.getProperty("os.name").lowercase()
