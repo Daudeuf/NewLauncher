@@ -46,7 +46,8 @@ runtime {
         "java.desktop",
         "jdk.crypto.ec",
         "jdk.unsupported",
-        "jdk.unsupported.desktop"
+        "jdk.unsupported.desktop",
+        "java.net.http"
     ))
 
     jpackage {
