@@ -21,7 +21,7 @@ public class Updater {
             if (!LAUNCHER_VERSION.equals(latestVersion)) {
                 JOptionPane.showMessageDialog(
                     null,
-                    "Mettez à jour le launcher",
+                    "Désinstallez le launcher et installez la nouvelle version du launcher",
                     "Mise à jour requise",
                     JOptionPane.WARNING_MESSAGE
                 );
