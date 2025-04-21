@@ -7,7 +7,6 @@ import fr.clem76.view.Options;
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;
-import fr.flowarg.flowupdater.download.Step;
 import fr.flowarg.flowupdater.utils.ModFileDeleter;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
 import fr.flowarg.flowupdater.versions.forge.ForgeVersion;
@@ -16,7 +15,6 @@ import fr.flowarg.openlauncherlib.NoFramework;
 import fr.theshark34.openlauncherlib.minecraft.GameFolder;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,39 +68,23 @@ public class Game {
                 long totalSize = connection.getContentLengthLong();
 
                 try (InputStream in = connection.getInputStream(); OutputStream out = Files.newOutputStream(tempZip, StandardOpenOption.TRUNCATE_EXISTING)) {
-                    //Files.copy(in, tempZip, StandardCopyOption.REPLACE_EXISTING);
-
                     byte[] buffer = new byte[8192];
                     long downloaded = 0;
                     int bytesRead;
-                    //int lastPercent = -1;
 
                     while ((bytesRead = in.read(buffer)) != -1) {
                         out.write(buffer, 0, bytesRead);
                         downloaded += bytesRead;
 
                         if (totalSize > 0) {
-
                             frame.getProgressbar().setValue((int) (500.0 * downloaded / totalSize));
-
-                            /*int percent = (int) ((downloaded * 100) / totalSize);
-                            if (percent != lastPercent) {
-                                System.out.print("\rTéléchargement : " + percent + "%");
-                                lastPercent = percent;
-                            }*/
                         }
                     }
 
                 }
-
-
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
-
-            try (InputStream in = new URI(DataReceiver.data.getString("zipUrl")).toURL().openStream()) {
-                Files.copy(in, tempZip, StandardCopyOption.REPLACE_EXISTING);
-            } catch (URISyntaxException _) {}
 
             Path tempExtractDir = Files.createTempDirectory("zip-extract-");
 
@@ -173,13 +155,6 @@ public class Game {
                 .withName(mc)
                 .build();
 
-        /*String modsString = ""; // ctrl.getSaver().get("additional_mod_list", "");
-        String[] mods     = modsString.split("\n");*/
-
-        /*System.out.println(mods.length);
-        if (mods.length == 0) modsList.addAll(List.of(modsString.split("\n")));
-        System.out.println(Arrays.toString(mods));
-        System.out.println(modsList);*/
         if (Options.json.has("additional_mods")) {
             modsList.addAll(Arrays.asList(Options.json.getString("additional_mods").split("\n")));
         }
@@ -216,7 +191,6 @@ public class Game {
 			long memorySize = ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize() / (1024 * 1024);
             int ramValue = Options.json.has("ram") ? Options.json.getInt("ram") : (int) Math.round(Math.min(memorySize, 16384) / 2.0);
 
-            // Set of ram
 			noFramework.getAdditionalVmArgs().add( String.format("-Xmx%sM", ramValue) );
 
 			Process p = noFramework.launch(
@@ -229,7 +203,6 @@ public class Game {
 
 			p.waitFor();
 
-            // reopen launcher
             if (Options.json.has("reopen_launcher") && Options.json.getBoolean("reopen_launcher")) {
                 frame.getProgressbar().setVisible(false);
                 frame.setVisible(true);
