@@ -1,6 +1,7 @@
 package fr.clem76.back;
 
 import fr.clem76.Main;
+import fr.clem76.view.MainFrame;
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.utils.ModFileDeleter;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
@@ -28,21 +29,21 @@ import java.util.zip.ZipInputStream;
 public class Game {
     private static final Saver saveFile = new Saver(Main.DIRECTORY.resolve("pack-data.json").toFile());
 
-    public static void setupAndStart(JProgressBar progressBar) {
-        progressBar.setVisible(true);
-        progressBar.setValue(50);
+    public static void setupAndStart(MainFrame frame) {
+        frame.getProgressbar().setVisible(true);
+        frame.getProgressbar().setValue(50);
 
         try {
-            ArrayList<String> mods = Game.setupMods();
+            ArrayList<String> mods = Game.setupMods(frame);
 
-            Game.setupLoader(mods);
+            Game.setupLoader(mods, frame);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static ArrayList<String> setupMods() throws IOException {
+    private static ArrayList<String> setupMods(MainFrame frame) throws IOException {
         JSONObject loaded = saveFile.load();
 
         ArrayList<String> mods = new ArrayList<>();
@@ -116,7 +117,7 @@ public class Game {
         return loaded.getJSONArray("mods").toList().stream().map(obj -> (String) obj).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static void setupLoader(ArrayList<String> modsList) {
+    private static void setupLoader(ArrayList<String> modsList, MainFrame frame) {
         String mc = DataReceiver.data.getString("minecraft_version");
         String loader = DataReceiver.data.getString("loader_version");
 
@@ -154,7 +155,7 @@ public class Game {
 					GameFolder.FLOW_UPDATER
 			);
 
-			String ramString = "4096"; // ctrl.getSaver().get("ram");
+			String ramString = "8192"; // ctrl.getSaver().get("ram");
 			int    ramValue  = Integer.parseInt(ramString == null ? "4096" : ramString);
 
             // Set of ram
@@ -166,7 +167,13 @@ public class Game {
 					NoFramework.ModLoader.FORGE
 			);
 
+            frame.dispose();
+
 			p.waitFor();
+
+            // reopen launcher
+            frame.getProgressbar().setVisible(false);
+            frame.setVisible(true);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -182,11 +182,15 @@ public class MainFrame extends JFrame implements ActionListener {
                 ServerData.init(DataReceiver.data.getString("ip"), l);
             } catch (IOException _) {}
 
-            Game.setupAndStart(progressBar);
+            Game.setupAndStart(this);
         }
 
         if (e.getSource() == this.btnOptions) {
 
         }
+    }
+
+    public JProgressBar getProgressbar() {
+        return this.progressBar;
     }
 }
