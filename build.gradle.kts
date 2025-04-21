@@ -32,9 +32,20 @@ application {
     mainClass.set("fr.clem76.Main")
 }
 
+tasks.register<Exec>("analyzeModules") {
+    val javaHome = System.getenv("JAVA_HOME") ?: System.getProperty("java.home")
+    commandLine = listOf(
+        "$javaHome/bin/jdeps",
+        "--multi-release", "23",
+        "--ignore-missing-deps",
+        "--print-module-deps",
+        "build/libs/NewLauncher-all.jar"
+    )
+}
+
 javafx {
     version = "21"
-    modules = listOf("javafx.swing", "javafx.web", "javafx.controls", "javafx.media", "javafx.fxml", "javafx.base", "javafx.graphics")
+    modules = listOf("javafx.swing", "javafx.web")
 }
 
 val currentOs = System.getProperty("os.name").lowercase()
@@ -43,11 +54,19 @@ runtime {
     options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages"))
     modules.set(listOf(
         "java.base",
-        "java.desktop",
-        "jdk.crypto.ec",
+        "java.compiler",
+        "java.net.http",
+        "java.scripting",
+        "java.sql",
+        "jdk.jfr",
+        "jdk.jsobject",
         "jdk.unsupported",
         "jdk.unsupported.desktop",
-        "java.net.http"
+        "jdk.xml.dom",
+
+        "java.desktop",
+        "jdk.crypto.ec",
+        "java.logging"
     ))
 
     jpackage {
